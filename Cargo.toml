@@ -1,12 +1,14 @@
 [package]
 name = "gamepad_motion"
-description = "Rust bindings for GamepadMotionHelpers."
+description = "Rust bindings for the GamepadMotionHelpers C++ library."
+license-file = "LICENSE"
+repository = "https://gitlab.com/awahab/gamepad_motion"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 autocxx = "0.26.0"
-cxx = "1.0.109"
+cxx = "1"
 
 [build-dependencies]
 autocxx-build = "0.26.0"
