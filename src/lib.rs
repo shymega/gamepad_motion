@@ -14,7 +14,7 @@ include_cpp! {
 
 type CalibrationMode = ffi::GamepadMotionHelpers::CalibrationMode;
 
-struct GamepadMotion(UniquePtr<ffi::GamepadMotion>);
+pub struct GamepadMotion(UniquePtr<ffi::GamepadMotion>);
 
 impl GamepadMotion {
     #[inline]
