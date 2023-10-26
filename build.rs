@@ -6,7 +6,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "submodule",
             "update",
             "--init",
-            "--depth 1",
+            "--depth=1",
             "--recommend-shallow",
         ])
         .output()
