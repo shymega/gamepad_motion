@@ -3,7 +3,7 @@ name = "gamepad_motion"
 description = "Rust bindings for the GamepadMotionHelpers C++ library."
 license-file = "LICENSE"
 repository = "https://gitlab.com/awahab/gamepad_motion"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [dependencies]
