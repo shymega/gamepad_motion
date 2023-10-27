@@ -1,6 +1,13 @@
 #![allow(unused)]
 use autocxx::{prelude::*, subclass::CppSubclassSelfOwnedDefault};
-use std::pin::{pin, Pin};
+use std::pin::Pin;
+
+// override for std::pin::pin!, which doesn't seem to behave the same as Pin::new(&mut)
+macro_rules! pin {
+    ($value:expr $(,)?) => {
+        std::pin::Pin::new(&mut $value)
+    };
+}
 
 include_cpp! {
     #include "GamepadMotion.hpp"
@@ -24,37 +31,33 @@ impl GamepadMotion {
 
     #[inline]
     pub fn gyro_player_space(&mut self, yaw_relax_factor: Option<f32>) -> [f32; 2] {
-        let mut xy = [0f32; 2];
-        self.0.pin_mut().GetPlayerSpaceGyro(
-            pin!(xy[0]),
-            pin!(xy[1]),
-            yaw_relax_factor.unwrap_or(1.41),
-        );
-        xy
+        let (mut x, mut y) = (0f32, 0f32);
+        self.0
+            .pin_mut()
+            .GetPlayerSpaceGyro(pin!(x), pin!(y), yaw_relax_factor.unwrap_or(1.41));
+        [x, y]
     }
 
     #[inline]
     pub fn gyro_calibrated(&mut self) -> [f32; 3] {
-        let mut xyz = [0f32; 3];
+        let (mut x, mut y, mut z) = (0f32, 0f32, 0f32);
         self.0
             .pin_mut()
-            .GetCalibratedGyro(pin!(xyz[0]), pin!(xyz[1]), pin!(xyz[2]));
-        xyz
+            .GetCalibratedGyro(pin!(x), pin!(y), pin!(z));
+        [x, y, z]
     }
 
     #[inline]
     pub fn gyro_world_space(&mut self, side_reduc_thresh: Option<f32>) -> [f32; 2] {
-        let mut xy = [0f32; 2];
-        self.0.pin_mut().GetWorldSpaceGyro(
-            pin!(xy[0]),
-            pin!(xy[1]),
-            side_reduc_thresh.unwrap_or(0.125),
-        );
-        xy
+        let (mut x, mut y) = (0f32, 0f32);
+        self.0
+            .pin_mut()
+            .GetWorldSpaceGyro(pin!(x), pin!(y), side_reduc_thresh.unwrap_or(0.125));
+        [x, y]
     }
 
     #[inline]
-    pub fn process(&mut self, g: &[f32; 3], a: &[f32; 3], dt: &f32) -> &Self {
+    pub fn process(&mut self, g: [f32; 3], a: [f32; 3], dt: &f32) -> &mut Self {
         self.0
             .pin_mut()
             .ProcessMotion(g[0], g[1], g[2], a[0], a[1], a[2], *dt);
@@ -80,38 +83,36 @@ impl GamepadMotion {
 
     #[inline]
     pub fn calib_offset(&mut self) -> [f32; 3] {
-        let mut xyz = [0f32; 3];
+        let (mut x, mut y, mut z) = (0f32, 0f32, 0f32);
         self.0
             .pin_mut()
-            .GetCalibrationOffset(pin!(xyz[0]), pin!(xyz[1]), pin!(xyz[2]));
-        xyz
+            .GetCalibrationOffset(pin!(x), pin!(y), pin!(z));
+        [x, y, z]
     }
 
     #[inline]
     pub fn orientation(&mut self) -> [f32; 4] {
-        let mut xyzw = [0f32; 4];
+        let (mut x, mut y, mut z, mut w) = (0f32, 0f32, 0f32, 0f32);
         self.0
             .pin_mut()
-            .GetOrientation(pin!(xyzw[3]), pin!(xyzw[0]), pin!(xyzw[1]), pin!(xyzw[2]));
-        xyzw
+            .GetOrientation(pin!(w), pin!(x), pin!(y), pin!(z));
+        [x, y, z, w]
     }
 
     #[inline]
     pub fn gravity(&mut self) -> [f32; 3] {
-        let mut xyz = [0f32; 3];
-        self.0
-            .pin_mut()
-            .GetGravity(pin!(xyz[0]), pin!(xyz[1]), pin!(xyz[2]));
-        xyz
+        let (mut x, mut y, mut z) = (0f32, 0f32, 0f32);
+        self.0.pin_mut().GetGravity(pin!(x), pin!(y), pin!(z));
+        [x, y, z]
     }
 
     #[inline]
     pub fn accel_processed(&mut self) -> [f32; 3] {
-        let mut xyz = [0f32; 3];
+        let (mut x, mut y, mut z) = (0f32, 0f32, 0f32);
         self.0
             .pin_mut()
-            .GetProcessedAcceleration(pin!(xyz[0]), pin!(xyz[1]), pin!(xyz[2]));
-        xyz
+            .GetProcessedAcceleration(pin!(x), pin!(y), pin!(z));
+        [x, y, z]
     }
 
     #[inline]
