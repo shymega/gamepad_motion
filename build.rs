@@ -3,14 +3,20 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::process::Command::new("git")
         .args([
-            "submodule",
-            "update",
-            "--init",
-            "--depth=1",
-            "--recommend-shallow",
+            "clone",
+            "https://github.com/JibbSmart/GamepadMotionHelpers",
+            "lib/GamepadMotionHelpers",
         ])
         .output()
         .expect("Failed to fetch git submodules!");
+    std::process::Command::new("git")
+        .args([
+            "checkout",
+            "39b578aacf34c3a1c584d8f7f194adc776f88055",
+        ])
+        .current_dir("lib/GamepadMotionHelpers")
+        .output()
+        .expect("Failed to checkout specific commit!");
     let path = std::path::PathBuf::from("lib/GamepadMotionHelpers");
     let mut b = autocxx_build::Builder::new("src/lib.rs", [&path])
         .extra_clang_args(&["-std=c++17"])
